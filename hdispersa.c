@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "distribuirHilos.h"
 #include "leerMatriz.h"
+#include "distribuirHilos.h"
+#include "dispersa.h"
 
 void imprimirMatriz(int** matriz, int fils, int cols);
 
@@ -12,7 +13,10 @@ int main(int argc, char *argv[])
         int fils = atoi(argv[1]);//atoi convierte argv[1] y argv[2] en enteros
         int cols = atoi(argv[2]);
         int p = atoi(argv[4]);//cantidad de hilos a ejecutar
-        int cantElementos;
+        float prctajeUsuario = atof(argv[5]);
+        float porcentElemNoCero;
+        int cantElemNoCero = 0;
+
 
         int **matrix; //Crea la matriz de enteros
         //int *vector; //vector que contiene la cantidad de numeros por proceso
@@ -21,10 +25,23 @@ int main(int argc, char *argv[])
 
         imprimirMatriz(matrix, fils, cols);
 
-        cantElementos = distribuirHilos(fils, cols, p, matrix);
+        cantElemNoCero = distribuirHilos(fils, cols, p, matrix);
 
-        printf("Cantidad de Elementos diferentes de cero : %d\n", cantElementos);
-        //imprimirVector(vector, p);
+        printf("Cantidad de Elementos diferentes de cero : %d\n\n", cantElemNoCero);
+
+        porcentElemNoCero = prctajeElemNoCero(fils, cols, cantElemNoCero);
+        
+        if(matrizEsDispersa(porcentElemNoCero, prctajeUsuario))
+        {
+            printf("El Usuario exigio %f%, y el prctajeCeros es %f%", prctajeUsuario, 100 - porcentElemNoCero);
+            printf("La matriz SI es dispersa\n");            
+        }
+        else
+        {
+            printf("El Usuario exigio %f%, y el prctajeCeros es %f%", prctajeUsuario, 100 - porcentElemNoCero);
+            printf("La matriz NO es dispersa\n");    
+        }
+
     }
     else
     {
@@ -45,4 +62,6 @@ void imprimirMatriz(int** matriz, int fils, int cols)
         }
         printf("\n");
     }
+
+    printf("\n");
 }

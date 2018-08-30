@@ -4,8 +4,6 @@
 #include "distribuirHilos.h"
 #include "dispersa.h"
 
-void imprimirMatriz(int** matriz, int fils, int cols);
-
 int main(int argc, char *argv[])
 {
     if(argc > 4)
@@ -13,9 +11,12 @@ int main(int argc, char *argv[])
         int fils = atoi(argv[1]);//atoi convierte argv[1] y argv[2] en enteros
         int cols = atoi(argv[2]);
         int p = atoi(argv[4]);//cantidad de hilos a ejecutar
-        float prctajeUsuario = atof(argv[5]);
-        float porcentElemNoCero;
-        int cantElemNoCero = 0;
+
+        double prctajeUsuario;
+        sscanf(argv[5], "%lf", &prctajeUsuario); //Convierte prctajeUsuario en double
+
+        int cantidadMinCeros; // Cantidad minima de ceros para que se considere la matriz como dispersa
+        int cantElemDifCero = 0; //Elementos en la matriz que son diferentes de cero
 
 
         int **matrix; //Crea la matriz de enteros
@@ -23,23 +24,17 @@ int main(int argc, char *argv[])
 
         matrix = leerMatriz(argv[3], fils, cols); //Guarda en memoria la matriz del archivo
 
-        imprimirMatriz(matrix, fils, cols);
+        cantElemDifCero = distribuirHilos(fils, cols, p, matrix);
 
-        cantElemNoCero = distribuirHilos(fils, cols, p, matrix);
-
-        printf("Cantidad de Elementos diferentes de cero : %d\n\n", cantElemNoCero);
-
-        porcentElemNoCero = prctajeElemNoCero(fils, cols, cantElemNoCero);
+        cantidadMinCeros = cantMinCeros(fils, cols, prctajeUsuario);
         
-        if(matrizEsDispersa(porcentElemNoCero, prctajeUsuario))
+        if(matrizEsDispersa(fils, cols, cantidadMinCeros, cantElemDifCero))
         {
-            printf("El Usuario exigio %f%, y el prctajeCeros es %f%", prctajeUsuario, 100 - porcentElemNoCero);
-            printf("La matriz SI es dispersa\n");            
+            printf("\nLa matriz en el archivo %s tiene un total de %d ceros, por tanto, se considera dispersa. Se requieren %d ceros.\n\n", argv[3], (fils*cols) - cantElemDifCero, cantidadMinCeros );
         }
         else
         {
-            printf("El Usuario exigio %f%, y el prctajeCeros es %f%", prctajeUsuario, 100 - porcentElemNoCero);
-            printf("La matriz NO es dispersa\n");    
+            printf("\nLa matriz en el archivo %s tiene un total de %d ceros, por tanto, no se considera dispersa. Se requieren %d ceros o más para considerarla dispersa.\n\n", argv[3], (fils*cols) - cantElemDifCero, cantidadMinCeros);   
         }
 
     }
@@ -49,19 +44,4 @@ int main(int argc, char *argv[])
     }
 
     return 0;
-}
-
-
-void imprimirMatriz(int** matriz, int fils, int cols)
-{
-    for(int i = 0; i < fils; i++)
-    {
-        for(int j = 0; j < cols; j++)
-        {
-            printf("%d ", matriz[i][j]);
-        }
-        printf("\n");
-    }
-
-    printf("\n");
 }

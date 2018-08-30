@@ -1,24 +1,32 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <math.h>
 
-float prctajeElemNoCero(int fils, int cols, int cantElemNoCero);
-bool matrizEsDispersa(float prctajeElemNoCero, float prctajeUsuario);
 
-float prctajeElemNoCero(int fils, int cols, int cantElemNoCero)
+int cantMinCeros(int fils, int cols, double prctajeUsuario);
+bool matrizEsDispersa(int fils, int cols, int cantMinCeros, int cantElemDifCero);
+
+int cantMinCeros(int fils, int cols, double prctajeUsuario)
 {
+	int cant_i;
+	double cant_d = (fils*cols)*prctajeUsuario / 100 ;
+
 	//Regla de Tres
 	//si 100% ----------> fils*cols
-	//   x    ---------->CantElemNoCero
-	//x = (fils*cols)/cantElemNoCero
-	return (100*cantElemNoCero)/(fils*cols); //Retorna el porcentaje de elemntos diferentes de cero que hay
+	//prctajeUsuario---->     x
+	//x = (fils*cols)*prctajeUsuario / 100
+
+	cant_i = (int) round(cant_d); //Redondea el decimal al entero mas cercano
+
+	return cant_i; //Retorna el numero minimo de ceros que debe tener la matriz para considerarse dispersa
 }
 
-bool matrizEsDispersa(float prctajeElemNoCero, float prctajeUsuario)
+bool matrizEsDispersa(int fils, int cols, int cantMinCeros, int cantElemDifCero)
 {
-	float prctajeCeros = 100 - prctajeElemNoCero;
+	float totalCeros = (fils*cols) - cantElemDifCero;
 
-	if(prctajeCeros >= prctajeUsuario)
+	if(totalCeros >= cantMinCeros)
 	{
 		return true;
 	}
